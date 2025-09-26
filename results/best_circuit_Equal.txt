@@ -1,0 +1,8 @@
+# Best circuit found (Fitness: 1.1428571428571428, Length: 7)
+1: Control=0, Target=1, Gate=C3Z13
+2: Control=1, Target=1, Gate=Z132
+3: Control=0, Target=0, Gate=Z0231
+4: Control=0, Target=1, Gate=C3Z13
+5: Control=0, Target=0, Gate=Z0231
+6: Control=0, Target=1, Gate=C3Z0312
+7: Control=1, Target=2, Gate=C3Z032
