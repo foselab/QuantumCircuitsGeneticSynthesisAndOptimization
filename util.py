@@ -65,6 +65,20 @@ def generate_ququart_truth_table():
             table[(a, b, 0)] = (a, b, f)
     return table
 
+SUB_F = {
+    (1,1):1, (1,2):2, (1,3):1,
+    (2,1):1, (2,2):2, (2,3):2,
+    (3,1):1, (3,2):2, (3,3):3,
+}
+
+def generate_subcomparator_truth_table():
+    tt = {}
+    for a in (1,2,3):
+        for b in (1,2,3):
+            f = SUB_F[(a,b)]
+            tt[(a, b, 0)] = (a, b, f)   # only ancilla (index 2) is enforced
+    return tt
+
 # Apply a single gate to a state
 def apply_gate(state, gate):
     ctrl, tgt, gtype = gate
@@ -104,3 +118,22 @@ def normalize_gate(g):
 
 def normalize_circuit(circ):
     return [normalize_gate(g) for g in circ]
+
+def generate_merge_patterns():
+    patterns = {}
+    perm_to_label = {}
+    preferred_labels = sorted(QSG_TABLE.items(), key=lambda kv: ('+' not in kv[0], kv[0]))
+    for k, v in preferred_labels:
+        if tuple(v) not in perm_to_label or '+' in k:
+            perm_to_label[tuple(v)] = k
+    for k1, v1 in QSG_TABLE.items():
+        for k2, v2 in QSG_TABLE.items():
+            composed = [v2[i] for i in v1]
+            result = perm_to_label.get(tuple(composed))
+            if result:
+                patterns[(f"Z{k1}", f"Z{k2}")] = f"Z{result}"
+                patterns[(f"C3Z{k1}", f"C3Z{k2}")] = f"C3Z{result}"
+    return patterns
+
+MERGE_PATTERNS = generate_merge_patterns()
+

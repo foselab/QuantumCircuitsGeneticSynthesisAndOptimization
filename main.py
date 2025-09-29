@@ -12,8 +12,8 @@ from jmetal.util.termination_criterion import TerminationCriterion
 from util import *
 from geneticalgorithm import ElitistGeneticAlgorithm
 
-TRUTH_TABLE = generate_ququart_truth_table()
-CIRCUIT_NAME = "FullComparator"
+TRUTH_TABLE = generate_subcomparator_truth_table()
+CIRCUIT_NAME = "SubComparator"
 OUTPUT_FILE_NAME = "output" + CIRCUIT_NAME + ".txt"
 BEST_CIRCUIT = "best_circuit_" + CIRCUIT_NAME + ".txt"
 N_REPETITIONS = 20

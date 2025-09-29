@@ -149,9 +149,78 @@ class CircuitMutation(Mutation):
     def post_optimize(self,circ):
         c1 = self.simplify_local(circ)
         if self.is_circuit_correct(c1):
-            c2 = self.greedy_prune(c1)
-            return c2
+            c2 = self.merge_only(c1, 2)
+            if self.is_circuit_correct(c2):
+                c3 = self.greedy_prune(c2)
+                return c3
+            return c1
         return circ
     
     def is_circuit_correct(self, circuit):
         return fitness(circuit, self.truth_table) >= 1.0
+    
+    def merge_only(self, circuit, target_qudit=2):
+        def try_merge_cross_control(g1, g2):
+            if g1[2].startswith("C3Z") and g2[2].startswith("Z") and g1[1] == g2[0]:
+                p1, p2 = QSG_TABLE.get(g1[2][3:]), QSG_TABLE.get(g2[2][1:])
+                if p1 and p2:
+                    composed = [p2[i] for i in p1]
+                    for label, val in QSG_TABLE.items():
+                        if val == composed:
+                            return (g1[0], g2[1], f"C3Z{label}")
+            return None
+
+        merged, i = [], 0
+        while i < len(circuit):
+            g1 = circuit[i]
+            if g1[0] == g1[1]:
+                current_label = g1[2][1:] if g1[2].startswith("Z") else g1[2]
+                j = i + 1
+                while j < len(circuit) and circuit[j][:2] == g1[:2]:
+                    label2 = circuit[j][2][1:] if circuit[j][2].startswith("Z") else circuit[j][2]
+                    key = (f"Z{current_label}", f"Z{label2}")
+                    if key in MERGE_PATTERNS:
+                        current_label = MERGE_PATTERNS[key][1:]
+                        j += 1
+                    else: break
+                merged.append((g1[0], g1[1], f"Z{current_label}"))
+                i = j
+                continue
+            if i + 1 < len(circuit):
+                g2 = circuit[i + 1]
+                if g1[:2] == g2[:2] and (g1[2], g2[2]) in MERGE_PATTERNS:
+                    merged.append((g1[0], g1[1], MERGE_PATTERNS[(g1[2], g2[2])]))
+                    i += 2
+                    continue
+                cross = try_merge_cross_control(g1, g2)
+                if cross:
+                    merged.append(cross)
+                    i += 2
+                    continue
+            merged.append(g1)
+            i += 1
+        final = []
+        used_indices = set()
+        for i, g in enumerate(merged):
+            if i in used_indices: continue
+            ctrl, tgt, label = g
+            if ctrl == tgt:
+                composed_label = label
+                j = i + 1
+                while j < len(merged):
+                    if j in used_indices: j += 1; continue
+                    if merged[j][0] == merged[j][1] == ctrl:
+                        key = (composed_label, merged[j][2])
+                        if key in MERGE_PATTERNS:
+                            composed_label = MERGE_PATTERNS[key]
+                            used_indices.add(j)
+                            j += 1
+                            continue
+                        else: break
+                    elif ctrl in merged[j][:2] or tgt in merged[j][:2]: break
+                    j += 1
+                final.append((ctrl, tgt, composed_label))
+                used_indices.add(i)
+            else:
+                final.append(g)
+        return final
