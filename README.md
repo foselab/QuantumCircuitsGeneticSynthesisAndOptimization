@@ -29,7 +29,7 @@ python main.py
 In the `main.py` file, you can adjust parameters such as the number of runs (`N_REPETITIONS`), the name of the circuit to be synthesized (`CIRCUIT_NAME`), and provide the function returning the truth table for the desired comparator (`TRUTH_TABLE`).
 
 The execution will generate two output files:
-- `output<CIRCUIT_NAME>.csv`: Contains the best fitness, circuit length, and execution time for each run.
+- `output<CIRCUIT_NAME>.txt`: Contains the best fitness, circuit length, and execution time for each run.
 - `best_circuit_<CIRCUIT_NAME>.txt`: Contains the details of the best circuit found among the runs.
 
 ### Further configurations
