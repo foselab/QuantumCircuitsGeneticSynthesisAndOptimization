@@ -1,6 +1,7 @@
 # Genetic Algorithm for Synthesizing a Quantum Circuit given its truth table
 
 import random
+import time
 from copy import deepcopy
 from quantumcircuitproblem import QuantumCircuitProblem
 from jmetal.operator.selection import BinaryTournamentSelection
@@ -12,8 +13,8 @@ from jmetal.util.termination_criterion import TerminationCriterion
 from util import *
 from geneticalgorithm import ElitistGeneticAlgorithm
 
-TRUTH_TABLE = generate_subcomparator_truth_table()
-CIRCUIT_NAME = "SubComparator"
+TRUTH_TABLE =  generate_lower_truth_table()
+CIRCUIT_NAME = "Lower"
 OUTPUT_FILE_NAME = "output" + CIRCUIT_NAME + ".txt"
 BEST_CIRCUIT = "best_circuit_" + CIRCUIT_NAME + ".txt"
 N_REPETITIONS = 20
@@ -44,7 +45,7 @@ if __name__ == "__main__":
 
     # Open the file to log results
     with open(OUTPUT_FILE_NAME, "w") as f:
-        f.write("Run,Best Fitness,Circuit Length\n")
+        f.write("Run,Best Fitness,Circuit Length,Time\n")
 
         for n in range(N_REPETITIONS):
             print(f"\n--- RUN {n+1}/{N_REPETITIONS} ---\n")
@@ -64,8 +65,10 @@ if __name__ == "__main__":
 
             algorithm.observable.register(observer=PrintObjectivesObserver(POP_SIZE))
 
+            start_time = time.time()
             algorithm.run()
             result = algorithm.result()
+            end_time = time.time()
 
             best_circuit = result.variables[0]
 
@@ -91,7 +94,7 @@ if __name__ == "__main__":
                 print("\n!!WARNING!!: Circuit has issues detecting the given function")
 
             # Log results
-            f.write(f"{n+1},{result.objectives[0]},{len(best_circuit)}\n")
+            f.write(f"{n+1},{result.objectives[0]},{len(best_circuit)},{end_time-start_time}\n")
             f.flush()
 
             # Save best circuit to file
