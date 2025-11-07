@@ -1,0 +1,14 @@
+# Restoring circuit (Length: 12)
+
+1: Control=1, Target=2, Gate=C3Z01  
+2: Control=0, Target=1, Gate=C3Z032  
+3: Control=1, Target=1, Gate=Z0231  
+4: Control=1, Target=0, Gate=C3Z0132  
+5: Control=0, Target=0, Gate=Z032  
+6: Control=0, Target=1, Gate=C3Z032  
+7: Control=1, Target=2, Gate=C3Z01  
+8: Control=0, Target=1, Gate=C3Z023  
+9: Control=0, Target=0, Gate=Z023  
+10: Control=1, Target=0, Gate=C3Z0231  
+11: Control=1, Target=1, Gate=Z0132  
+12: Control=0, Target=1, Gate=C3Z023
