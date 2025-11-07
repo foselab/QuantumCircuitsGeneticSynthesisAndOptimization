@@ -1,7 +1,8 @@
-# Write a Pthon script that takes all files starting with output and ending with .txt in the current directory, and for each file, it reads the content and 
-# #extracts the third column (Circuit Length) from each line (ignoring the header). 
-# It then computes the average of these values for each file, the standard deviation, the minimum, and the median. In this process only consider rows having
-# the second column (Best Fitness) greater or equal to 1.0. Finally, print for each file the number of rows having Best Fitness < 1.0
+# A python script that takes all files starting with output and ending with .txt in the current directory, and for each file, it reads the content and 
+# extracts the third column (Circuit Length) from each line (ignoring the header). 
+# It then computes the average of these values for each file, the standard deviation, the minimum, and the median. 
+# In this process we only consider rows having the second column (Best Fitness) greater or equal to 1.0. 
+# Finally, the script prints for each file the number of rows having Best Fitness < 1.0
 
 
 import os
@@ -23,7 +24,7 @@ def analyze_output_files():
         print("No files matching 'output*.txt' found in the current directory.")
         return
 
-    print("ðŸ“Š ANALYZING OUTPUT FILES")
+    print("ANALYZING OUTPUT FILES")
     print("=" * 60)
 
     for filename in sorted(files):
